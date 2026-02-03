@@ -1,0 +1,24 @@
+name: QA CI Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  ui-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Run UI Automation Tests
+      run: |
+        cd 05-UI-Automation
+        mvn clean test
