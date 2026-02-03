@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Failed suite [Default suite]" guice-stage="DEVELOPMENT">
+  <test thread-count="5" name="Default test(failed)">
+    <classes>
+      <class name="ui.tests.Error_userTests">
+        <methods>
+          <include name="AfterTest"/>
+          <include name="DeleteAllProducts"/>
+          <include name="SetUp"/>
+          <include name="sorting"/>
+          <include name="Checkout"/>
+          <include name="AddAllTheProducts"/>
+        </methods>
+      </class> <!-- ui.tests.Error_userTests -->
+      <class name="ui.tests.LoginClass">
+        <methods>
+          <include name="Performance_glitch_userLogin"/>
+          <include name="AfterTest"/>
+          <include name="SetUp"/>
+        </methods>
+      </class> <!-- ui.tests.LoginClass -->
+      <class name="ui.tests.Problem_userTests">
+        <methods>
+          <include name="Checkout"/>
+          <include name="AddAllTheProducts"/>
+          <include name="sorting"/>
+          <include name="AfterTest"/>
+          <include name="SetUp"/>
+          <include name="DeleteAllProducts"/>
+        </methods>
+      </class> <!-- ui.tests.Problem_userTests -->
+    </classes>
+  </test> <!-- Default test(failed) -->
+</suite> <!-- Failed suite [Default suite] -->

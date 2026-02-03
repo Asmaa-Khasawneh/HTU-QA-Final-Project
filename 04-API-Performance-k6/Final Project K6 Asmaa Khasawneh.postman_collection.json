@@ -1,0 +1,245 @@
+{
+  "info": {
+    "_postman_id": "3c0e8c4f-b7f4-44f8-bb01-9633f34379c0",
+    "name": "New Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "38709569"
+  },
+  "item": [
+    {
+      "name": "Cart Copy",
+      "item": [
+        {
+          "name": "Get all carts",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "\r",
+                  "//Status code & responseTime \r",
+                  "pm.test(\"Status code is 200\", () => {\r",
+                  "    pm.expect(pm.response.code).to.eql(200);\r",
+                  "});\r",
+                  "pm.test(\"Response time is acceptable\", () => {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+                  "});\r",
+                  "\r",
+                  "// Response format \r",
+                  "pm.test(\"Response is JSON\", () => {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "// Structure \r",
+                  "pm.test(\"Carts array exists\", () => {\r",
+                  "    pm.expect(response.carts).to.be.an(\"array\");\r",
+                  "});\r",
+                  "pm.test(\"Carts array is not empty\", () => {\r",
+                  "    pm.expect(response.carts.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "/* Cart fields check */\r",
+                  "pm.test(\"Each cart has required fields\", () => {\r",
+                  "    response.carts.forEach(cart => {\r",
+                  "        pm.expect(cart).to.have.property(\"id\");\r",
+                  "        pm.expect(cart).to.have.property(\"userId\");\r",
+                  "        pm.expect(cart).to.have.property(\"products\");\r",
+                  "        pm.expect(cart).to.have.property(\"total\");\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  "const carts = response.carts;\r",
+                  "const randomIndex = Math.floor(Math.random() * carts.length);\r",
+                  "const randomCart = carts[randomIndex];\r",
+                  "pm.environment.set(\"cartId\", randomCart.id);\r",
+                  "pm.test(\"Random cart ID is selected and stored\", function () {\r",
+                  "    pm.expect(randomCart.id).to.exist;\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BaseURL}}/carts",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "carts"
+              ]
+            },
+            "description": "This request retrieves all shopping carts available in the system.\n\nIt validates the carts list structure and ensures that each cart contains the required fields and product details.\n\n**Validations performed:**\n\n- Verify that the API responds with HTTP 200.\n    \n- Verify that the response is returned in JSON format.\n    \n- Verify that the carts array exists and is not empty.\n    \n- Verify that each cart contains required cart fields.\n    \n- Verify acceptable response time for performance stability."
+          },
+          "response": []
+        },
+        {
+          "name": "Get a single cart",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "\r",
+                  "/* Status code */\r",
+                  "pm.test(\"Status code is 200 OK\", () => {\r",
+                  "    pm.expect(pm.response.code).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "/* Response is JSON */\r",
+                  "pm.test(\"Response is valid JSON\", () => {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "/* Cart ID is returned */\r",
+                  "pm.test(\"Cart ID is returned\", () => {\r",
+                  "    pm.expect(response.id).to.eql(Number(pm.environment.get(\"cartId\")));\r",
+                  "});\r",
+                  "\r",
+                  "/* User ID exists */\r",
+                  "pm.test(\"User ID is returned\", () => {\r",
+                  "    pm.expect(response.userId).to.exist;\r",
+                  "});\r",
+                  "\r",
+                  "/* Products array exists */\r",
+                  "pm.test(\"Products array exists\", () => {\r",
+                  "    pm.expect(response.products).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "/* Products array not empty */\r",
+                  "pm.test(\"Products list is not empty\", () => {\r",
+                  "    pm.expect(response.products.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "/* Product structure */\r",
+                  "pm.test(\"Each product has required fields\", () => {\r",
+                  "    response.products.forEach(product => {\r",
+                  "        pm.expect(product).to.have.property(\"id\");\r",
+                  "        pm.expect(product).to.have.property(\"quantity\");\r",
+                  "        pm.expect(product).to.have.property(\"price\");\r",
+                  "        pm.expect(product).to.have.property(\"total\");\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "/* Cart totals exist */\r",
+                  "pm.test(\"Cart totals are returned\", () => {\r",
+                  "    pm.expect(response).to.have.property(\"total\");\r",
+                  "    pm.expect(response).to.have.property(\"discountedTotal\");\r",
+                  "    pm.expect(response).to.have.property(\"totalProducts\");\r",
+                  "    pm.expect(response).to.have.property(\"totalQuantity\");\r",
+                  "});\r",
+                  "\r",
+                  "/* Performance */\r",
+                  "pm.test(\"Response time is less than 1000 ms\", () => {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BaseURL}}/carts/{{cartId}}",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "carts",
+                "{{cartId}}"
+              ]
+            },
+            "description": "This request retrieves detailed information about a single cart using its unique cart ID.\n\nThe response includes cart details, user information, product list, and calculated totals.\n\n**Validations performed:**\n\n- Verify that the API responds with HTTP 200.\n    \n- Verify that the response is returned in JSON format.\n    \n- Verify that the correct cart ID is returned.\n    \n- Verify that the cart contains a list of products.\n    \n- Verify that each product contains required fields.\n    \n- Verify that cart totals are calculated and returned.\n    \n- Verify acceptable response time."
+          },
+          "response": []
+        },
+        {
+          "name": "Get carts by a user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "//Status code & responseTime \r",
+                  "pm.test(\"Status code is 200\", () => {\r",
+                  "    pm.expect(pm.response.code).to.eql(200);\r",
+                  "});\r",
+                  "pm.test(\"Response time is acceptable\", () => {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+                  "});\r",
+                  "\r",
+                  "// Response format \r",
+                  "pm.test(\"Response is JSON\", () => {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  "/* carts array exists */\r",
+                  "pm.test(\"Carts array exists\", () => {\r",
+                  "    pm.expect(response.carts).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  " \r",
+                  "/* carts belong to the user */\r",
+                  "pm.test(\"Carts belong to the requested user\", () => {\r",
+                  "    response.carts.forEach(cart => {\r",
+                  "        pm.expect(cart.userId).to.eql(1);\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BaseURL}}/carts/user/{{userId}}",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "carts",
+                "user",
+                "{{userId}}"
+              ]
+            },
+            "description": "**Description – Get Carts by User**\n\nThis request retrieves all shopping carts associated with a specific user.\n\nIt validates that the returned carts belong to the requested user and that cart data is returned successfully.\n\n**Validations performed:**\n\n- Verify that the API responds with HTTP 200.\n    \n- Verify that the response is returned in JSON format.\n    \n- Verify that at least one cart is returned.\n    \n- Verify that all returned carts belong to the requested user."
+          },
+          "response": []
+        }
+      ],
+      "description": "This folder contains read-only cart requests such as:\n\n- Get all carts\n    \n- Get single cart\n    \n- Retrieve cart data for validation and chaining"
+    }
+  ]
+}

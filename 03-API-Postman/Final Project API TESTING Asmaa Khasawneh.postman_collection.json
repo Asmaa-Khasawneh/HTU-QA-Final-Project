@@ -1,0 +1,2001 @@
+{
+  "info": {
+    "_postman_id": "20fe8f96-4305-48ff-a74a-ba5833d78db4",
+    "name": "Final Project API TESTING Asmaa Khasawneh",
+    "description": "## Collection Description – API Testing Final Project (DummyJSON)\n\nThis collection represents the **API Testing Final Project**, implemented using **Postman** and based on the **DummyJSON API**.\n\nThe purpose of this collection is to validate the functionality, reliability, and behavior of multiple API endpoints through **positive and negative test scenarios**, following Quality Assurance best practices.\n\n---\n\n### Authentication\n\nAuthentication endpoints are tested to ensure secure access and proper session handling.  \n  \nThis includes validating successful login, token generation, token refresh functionality, and system behavior when invalid or unauthorized requests are sent.\n\n---\n\n### Products\n\nProduct-related endpoints are tested to verify correct retrieval, creation, updating, and deletion of products.  \n  \nBoth functional scenarios and validation-related edge cases are covered to ensure data consistency and expected API behavior.\n\n---\n\n### Product Categories\n\nCategory endpoints are tested to validate category retrieval in different formats and to ensure correct filtering of products by category.  \n  \nDynamic data handling is applied to avoid hard-coded values.\n\n---\n\n### Carts\n\nCart endpoints are tested to validate cart creation, retrieval, updating, and deletion operations.  \n  \nThe tests ensure correct linkage between users, products, and cart calculations such as totals and quantities.\n\n---\n\n### Negative Scenarios\n\nNegative test cases are included to evaluate how the API handles invalid input, unauthorized access, non-existent resources, and missing required data.  \n  \nSome negative tests intentionally fail to highlight **validation gaps** and potential data integrity issues within the API.\n\n---\n\n### Testing Approach\n\n- Automated assertions are implemented using Postman test scripts.\n    \n- Environment variables are used for dynamic data handling (tokens, IDs).\n    \n- Response validation includes status codes, response format, data structure, and performance checks.\n    \n- Observed API limitations are documented as part of the testing results.\n    \n\n---\n\n### Conclusion\n\nThis collection demonstrates a structured and realistic API testing approach, combining functional validation with negative testing to reflect real-world Quality Assurance practices.\n\n---",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "38709569"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login user and get tokens",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const users = [\r",
+                  "  { username: \"emilys\", password: \"emilyspass\" },\r",
+                  "  { username: \"michaelw\", password: \"michaelwpass\" },\r",
+                  "  { username: \"sophiab\", password: \"sophiabpass\" },\r",
+                  "  { username: \"jamesd\", password: \"jamesdpass\" },\r",
+                  "  { username: \"emmaj\", password: \"emmajpass\" },\r",
+                  "  { username: \"oliviaw\", password: \"oliviawpass\" },\r",
+                  "  { username: \"alexanderj\", password: \"alexanderjpass\" },\r",
+                  "  { username: \"avat\", password: \"avatpass\" },\r",
+                  "  { username: \"ethanm\", password: \"ethanmpass\" },\r",
+                  "  { username: \"isabellad\", password: \"isabelladpass\" }\r",
+                  "];\r",
+                  "\r",
+                  "// pick random valid user\r",
+                  "const randomUser = users[Math.floor(Math.random() * users.length)];\r",
+                  "\r",
+                  "pm.environment.set(\"username\", randomUser.username);\r",
+                  "pm.environment.set(\"password\", randomUser.password);\r",
+                  "\r",
+                  "console.log(\"Login user:\", randomUser.username);\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "//save access token and refresh token in environment variables for future requests.\r",
+                  "pm.environment.set(\"accessToken\", response.accessToken);\r",
+                  "pm.environment.set(\"refreshToken\", response.refreshToken);\r",
+                  "\r",
+                  "// Save user ID \r",
+                  "pm.environment.set(\"userId\", response.id);\r",
+                  "pm.test(\"User ID is saved\", () => {\r",
+                  "    pm.expect(pm.environment.get(\"userId\")).to.exist;\r",
+                  "});\r",
+                  "//Status code Should be 200\r",
+                  "pm.test(\"Status code is 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "// returning the important data from the response\r",
+                  "pm.test(\"accessToken is returned\", () => {\r",
+                  "    pm.expect(response.accessToken).to.exist;\r",
+                  "});\r",
+                  "pm.test(\"refreshToken is returned\", () => {\r",
+                  "    pm.expect(response.refreshToken).to.exist;\r",
+                  "});\r",
+                  "pm.test(\"User ID exists\", () => {\r",
+                  "    pm.expect(response.id).to.be.a(\"number\");\r",
+                  "});\r",
+                  "pm.test(\"Username is returned\", () => {\r",
+                  "    pm.expect(response.username).to.exist;\r",
+                  "});\r",
+                  "\r",
+                  "//cheching the response time\r",
+                  "pm.test(\"Response time is acceptable\", () => {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  "// data is returned as JSON\r",
+                  "pm.test(\"Response is valid JSON\", () => {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"{{username}}\",\r\n  \"password\": \"{{password}}\"\r\n}\r\n\r\n\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BaseURL}}/auth/login",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "This request authenticates a valid user using the DummyJSON authentication endpoint.\n\nA random valid user is selected from a predefined list of credentials provided by DummyJSON documentation.\n\nThe request sends the username and password to obtain an access token and refresh token.\n\n**Validations performed:**\n\n- Verify that the API responds with HTTP 200.\n    \n- Verify that the response is returned in JSON format.\n    \n- Verify that an access token is returned.\n    \n- Verify that a refresh token is returned.\n    \n- Store the access token and refresh token as environment variables for use in protected endpoints."
+          },
+          "response": []
+        },
+        {
+          "name": "Get current auth user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "\r",
+                  "//Status code Should be 200\r",
+                  "pm.test(\"Status code is 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "// data is returned as JSON\r",
+                  "pm.test(\"Response is valid JSON\", () => {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "// returning the important data from the response\r",
+                  "pm.test(\"User ID exists\", () => {\r",
+                  "    pm.expect(response.id).to.be.a(\"number\");\r",
+                  "});\r",
+                  "pm.test(\"Username exists\", () => {\r",
+                  "    pm.expect(response.username).to.exist;\r",
+                  "});\r",
+                  "const loggedInUsername = pm.environment.get(\"username\");\r",
+                  "pm.test(\"Returned user matches logged-in user\", function () {\r",
+                  "    pm.expect(response.username).to.eql(loggedInUsername);\r",
+                  "});\r",
+                  "\r",
+                  "//cheching the response time\r",
+                  "pm.test(\"Response time is acceptable\", () => {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "packages": {},
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{BaseURL}}/auth/me",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            },
+            "description": "This request validates the authenticated user session using the access token obtained from the login request.\n\nThe request accesses a protected endpoint and confirms that the provided access token is valid.\n\n**Validations performed:**\n\n- Verify that the API responds with HTTP 200.\n    \n- Verify that the response is returned in JSON format.\n    \n- Verify that user information is returned.\n    \n- Verify that the returned user data matches the authenticated session.\n    \n- Verify stable and consistent behavior across multiple executions.\n    \n\nThis request confirms that authentication and authorization are working correctly."
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh auth session",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "\r",
+                  "//Status code Should be 200\r",
+                  "pm.test(\"Status code is 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "// data is returned as JSON\r",
+                  "pm.test(\"Response is JSON\", () => {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "// returning the important data from the response\r",
+                  "pm.test(\"New accessToken is returned\", () => {\r",
+                  "    pm.expect(response.accessToken).to.exist;\r",
+                  "});\r",
+                  "pm.test(\"New refreshToken is returned\", () => {\r",
+                  "    pm.expect(response.refreshToken).to.exist;\r",
+                  "});\r",
+                  "\r",
+                  "// Update the variables\r",
+                  "pm.environment.set(\"accessToken\", response.accessToken);\r",
+                  "pm.environment.set(\"refreshToken\", response.refreshToken);\r",
+                  "\r",
+                  "\r",
+                  "//valid accessToken\r",
+                  "pm.test(\"accessToken is not empty\", () => {\r",
+                  "    pm.expect(response.accessToken.length).to.be.above(10);\r",
+                  "});\r",
+                  "\r",
+                  "//cheching the response time\r",
+                  "pm.test(\"Response time is acceptable\", () => {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"refreshToken\": \"{{refreshToken}}\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BaseURL}}/auth/refresh",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "auth",
+                "refresh"
+              ]
+            },
+            "description": "This request refreshes the authentication session using a valid refresh token.\n\nIt generates a new access token without requiring the user to log in again.\n\n**Validations performed:**\n\n- Verify that the API responds with HTTP 200.\n    \n- Verify that the response is returned in JSON format.\n    \n- Verify that a new access token is returned.\n    \n- Update the access token environment variable with the refreshed token.\n    \n\nThis request ensures session continuity and token lifecycle management."
+          },
+          "response": []
+        }
+      ],
+      "description": "---\n\nThis folder contains all API requests related to user authentication, including login and token-based authorization.",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products (Big File)",
+      "item": [
+        {
+          "name": "Products",
+          "item": [
+            {
+              "name": "Get all products",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json();\r",
+                      "\r",
+                      "//status code and response time tests\r",
+                      "pm.test(\"Status code is 200\", () => {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "pm.test(\"Response time is acceptable\", () => {\r",
+                      "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                      "});\r",
+                      "//Response body is in JSON format.\r",
+                      "pm.test(\"Response is JSON\", () => {\r",
+                      "    pm.response.to.be.json;\r",
+                      "});\r",
+                      "\r",
+                      "// Structure should be as array\r",
+                      "pm.test(\"Products array exists\", () => {\r",
+                      "    pm.expect(response.products).to.be.an(\"array\");\r",
+                      "});\r",
+                      "//There is a product\r",
+                      "pm.test(\"Products array is not empty\", () => {\r",
+                      "    pm.expect(response.products.length).to.be.above(0);\r",
+                      "});\r",
+                      "\r",
+                      "// Field checks \r",
+                      "pm.test(\"Each product has required fields\", () => {\r",
+                      "    const products = pm.response.json().products;\r",
+                      "\r",
+                      "    products.forEach(product => {\r",
+                      "        pm.expect(product).to.have.property(\"id\");\r",
+                      "        pm.expect(product).to.have.property(\"title\");\r",
+                      "        pm.expect(product).to.have.property(\"price\");\r",
+                      "        pm.expect(product).to.have.property(\"description\");\r",
+                      "        pm.expect(product).to.have.property(\"category\");\r",
+                      "    });\r",
+                      "});\r",
+                      "\r",
+                      "//Save the productId of a random product to the environment variables.\r",
+                      "const products = pm.response.json().products;\r",
+                      "const randomIndex = Math.floor(Math.random() * products.length);\r",
+                      "const productId = products[randomIndex].id;\r",
+                      "pm.environment.set(\"productId\", productId);\r",
+                      "\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BaseURL}}/products",
+                  "host": [
+                    "{{BaseURL}}"
+                  ],
+                  "path": [
+                    "products"
+                  ]
+                },
+                "description": "This request retrieves the list of available products from the DummyJSON products endpoint.\n\nIn addition to validating the products list response, this request dynamically selects a product ID from the returned products array and stores it as an environment variable.\n\nThe stored product ID is later reused in the **Get Single Product** request to enable dynamic and reusable test execution.\n\n**Validations performed:**\n\n- Verify that the API responds with HTTP 200.\n    \n- Verify that the response is returned in JSON format.\n    \n- Verify that the products array exists and is not empty.\n    \n- Verify that each product item contains the required core fields (id, title, price).\n    \n- Verify acceptable response time for performance stability.\n    \n\n**Additional behavior:**\n\n- Randomly select a product ID from the products list.\n    \n- Store the selected product ID as an environment variable for use in subsequent requests."
+              },
+              "response": []
+            },
+            {
+              "name": "Get a single product",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json();\r",
+                      "\r",
+                      "//status code and response time tests\r",
+                      "pm.test(\"Status code is 200\", () => {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "pm.test(\"Response time is acceptable\", () => {\r",
+                      "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                      "});\r",
+                      "\r",
+                      "//Response body is in JSON format.\r",
+                      "pm.test(\"Response is JSON\", () => {\r",
+                      "    pm.response.to.be.json;\r",
+                      "});\r",
+                      "\r",
+                      "// Correct product\r",
+                      "pm.test(\"Returned product has correct ID\", () => {\r",
+                      "    pm.expect(response.id).to.eql(Number(pm.environment.get(\"productId\")));\r",
+                      "});\r",
+                      "\r",
+                      "/* Core fields */\r",
+                      "pm.test(\"Product has required fields\", () => {\r",
+                      "    pm.expect(response).to.have.property(\"id\");\r",
+                      "    pm.expect(response).to.have.property(\"title\");\r",
+                      "    pm.expect(response).to.have.property(\"price\");\r",
+                      "    pm.expect(response).to.have.property(\"description\");\r",
+                      "    pm.expect(response).to.have.property(\"category\");\r",
+                      "\r",
+                      "});\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BaseURL}}/products/{{productId}}",
+                  "host": [
+                    "{{BaseURL}}"
+                  ],
+                  "path": [
+                    "products",
+                    "{{productId}}"
+                  ]
+                },
+                "description": "This request retrieves a single product by ID.  \n  \nThe product ID is dynamically selected from the products list and stored as an environment variable to ensure stable and reusable execution.\n\n**Validations performed:**\n\n- Verify that the API responds with HTTP 200.\n    \n- Verify that the response is returned in JSON format.\n    \n- Verify that the returned product ID matches the requested ID.\n    \n- Verify that the product contains the required core fields."
+              },
+              "response": []
+            },
+            {
+              "name": "Limit and skip products",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json();\r",
+                      "//status code and response time tests\r",
+                      "pm.test(\"Status code is 200\", () => {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "pm.test(\"Response time is acceptable\", () => {\r",
+                      "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                      "});\r",
+                      "\r",
+                      "//Response body is in JSON format.\r",
+                      "pm.test(\"Response is JSON\", () => {\r",
+                      "    pm.response.to.be.json;\r",
+                      "});\r",
+                      "\r",
+                      "//Returned data should be array\r",
+                      "pm.test(\"Products array exists\", () => {\r",
+                      "    pm.expect(response.products).to.be.an(\"array\");\r",
+                      "});\r",
+                      "\r",
+                      "//size=limit\r",
+                      "pm.test(\"Products array size equals limit\", () => {\r",
+                      "    pm.expect(response.products.length).to.eql(10);\r",
+                      "});\r",
+                      "\r",
+                      "/* Each item core fields */\r",
+                      "pm.test(\"Each product has required fields\", () => {\r",
+                      "    response.products.forEach(product => {\r",
+                      "        pm.expect(product).to.have.property(\"id\");\r",
+                      "        pm.expect(product).to.have.property(\"title\");\r",
+                      "        pm.expect(product).to.have.property(\"price\");\r",
+                      "    });\r",
+                      "});\r",
+                      "\r",
+                      "//Metadata checks\r",
+                      "pm.test(\"Pagination metadata exists\", () => {\r",
+                      "    pm.expect(response.total).to.be.a(\"number\");\r",
+                      "    pm.expect(response.skip).to.eql(0);\r",
+                      "    pm.expect(response.limit).to.eql(10);\r",
+                      "});\r",
+                      "\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{BaseURL}}/products?limit=10&skip=0&select=title,price",
+                  "host": [
+                    "{{BaseURL}}"
+                  ],
+                  "path": [
+                    "products"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "skip",
+                      "value": "0"
+                    },
+                    {
+                      "key": "select",
+                      "value": "title,price"
+                    }
+                  ]
+                },
+                "description": "This request retrieves a paginated list of products using query parameters.\n\nPagination is applied using `limit` and `skip`, and partial response fields are requested using the `select` parameter.\n\n**Query parameters used:**\n\n- limit: Number of products returned.\n    \n- skip: Number of products skipped.\n    \n- select: Fields included in the response.\n    \n\n**Validations performed:**\n\n- Verify that the API responds with HTTP 200.\n    \n- Verify that the response is returned in JSON format.\n    \n- Verify that the products array size matches the specified limit.\n    \n- Verify that pagination metadata (total, skip, limit) is returned correctly.\n    \n- Verify that each product contains the expected selected fields."
+              },
+              "response": []
+            },
+            {
+              "name": "Search products",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json();\r",
+                      "//status code and response time tests\r",
+                      "pm.test(\"Status code is 200\", () => {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "pm.test(\"Response time is acceptable\", () => {\r",
+                      "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                      "});\r",
+                      "\r",
+                      "//Response body is in JSON format.\r",
+                      "pm.test(\"Response is JSON\", () => {\r",
+                      "    pm.response.to.be.json;\r",
+                      "});\r",
+                      "\r",
+                      "//array exists\r",
+                      "pm.test(\"Products array exists\", () => {\r",
+                      "    pm.expect(response.products).to.be.an(\"array\");\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Search results are not empty\", () => {\r",
+                      "    pm.expect(response.products.length).to.be.above(0);\r",
+                      "});\r",
+                      "\r",
+                      "// Search about the word \r",
+                      "pm.test(\"Each product matches search query\", () => {\r",
+                      "    response.products.forEach(product => {\r",
+                      "        pm.expect(\r",
+                      "            product.title.toLowerCase().includes(\"phone\") || \r",
+                      "            product.description.toLowerCase().includes(\"phone\")\r",
+                      "        ).to.be.true;\r",
+                      "    });\r",
+                      "});\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{BaseURL}}/products/search?q=phone",
+                  "host": [
+                    "{{BaseURL}}"
+                  ],
+                  "path": [
+                    "products",
+                    "search"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "phone"
+                    }
+                  ]
+                },
+                "description": "This request searches for products using a keyword query.\n\nThe request validates that the products search endpoint correctly filters products based on the provided search term and returns relevant results.\n\n**Validations performed:**\n\n- Verify that the API responds with HTTP 200.\n    \n- Verify that the response is returned in JSON format.\n    \n- Verify that the products array exists and contains search results.\n    \n- Verify that each returned product is relevant to the search query.\n    \n\nThis request ensures accurate and reliable product search functionality."
+              },
+              "response": []
+            }
+          ],
+          "description": "This folder contains read-only product requests such as:\n\n- Get all products\n    \n- Get single product\n    \n- Pagination (limit & skip)\n    \n- Product search"
+        },
+        {
+          "name": "CRUD",
+          "item": [
+            {
+              "name": "Add a new product",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json();\r",
+                      "\r",
+                      "// Status code and response time tests\r",
+                      "pm.test(\"Status code is 201\", function () {\r",
+                      "    pm.response.to.have.status(201);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Response time is acceptable\", function () {\r",
+                      "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                      "});\r",
+                      "\r",
+                      "// Response body is JSON format\r",
+                      "pm.test(\"Response is JSON\", function () {\r",
+                      "    pm.response.to.be.json;\r",
+                      "});\r",
+                      "\r",
+                      "// Core fields validation\r",
+                      "pm.test(\"Product core fields are returned\", function () {\r",
+                      "    pm.expect(response).to.have.property(\"id\");\r",
+                      "    pm.expect(response).to.have.property(\"title\");\r",
+                      "    pm.expect(response).to.have.property(\"price\");\r",
+                      "    pm.expect(response).to.have.property(\"description\");\r",
+                      "});\r",
+                      "\r",
+                      "// 🔥 Data-driven validation (from CSV)\r",
+                      "pm.test(\"Returned product matches CSV data\", function () {\r",
+                      "    pm.expect(response.title).to.eql(pm.iterationData.get(\"title\"));\r",
+                      "    pm.expect(response.category).to.eql(pm.iterationData.get(\"category\"));\r",
+                      "});\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"title\": \"{{title}}\",\r\n  \"price\": {{price}},\r\n  \"description\": \"{{description}}\",\r\n  \"category\": \"{{category}}\"\r\n}\r\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BaseURL}}/products/add",
+                  "host": [
+                    "{{BaseURL}}"
+                  ],
+                  "path": [
+                    "products",
+                    "add"
+                  ]
+                },
+                "description": "This request adds a new product using the products API endpoint.\n\nThe request sends product details such as title, price, description, and category, and validates successful product creation behavior.\n\n**Validations performed:**\n\n- Verify that the API responds with HTTP **201 (Created)**.\n    \n- Verify that the response is returned in **JSON format**.\n    \n- Verify that the response contains the core product fields (**id, title, price**).\n    \n- Verify acceptable response time to ensure performance stability."
+              },
+              "response": []
+            },
+            {
+              "name": "Update a product",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json();\r",
+                      "//status code and response time tests\r",
+                      "pm.test(\"Status code is 200\", () => {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "pm.test(\"Response time is acceptable\", () => {\r",
+                      "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                      "});\r",
+                      "//Response body is in JSON format.\r",
+                      "pm.test(\"Response is JSON\", () => {\r",
+                      "    pm.response.to.be.json;\r",
+                      "});\r",
+                      "\r",
+                      "\r",
+                      "/* Updated fields validation */\r",
+                      "pm.test(\"Product title and price are updated\", () => {\r",
+                      "    pm.expect(response.title).to.eql(\"Updated Test Product\");\r",
+                      "    pm.expect(response.price).to.eql(150);\r",
+                      "});\r",
+                      "//Verify that the product ID remains unchanged.\r",
+                      "pm.test(\"Returned product ID matches stored product ID\", function () {\r",
+                      "    const storedProductId = pm.environment.get(\"productId\");\r",
+                      "\r",
+                      "    pm.expect(response.id).to.eql(storedProductId);\r",
+                      "});\r",
+                      "\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"title\": \"Updated Test Product\",\r\n  \"price\": 150\r\n}\r\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BaseURL}}/products/{{productId}}",
+                  "host": [
+                    "{{BaseURL}}"
+                  ],
+                  "path": [
+                    "products",
+                    "{{productId}}"
+                  ]
+                },
+                "description": "This request updates an existing product using its unique product ID.\n\nThe product ID is dynamically retrieved from the Saved variable(Random).\n\nThe request modifies selected product fields and validates that the update is applied successfully.\n\n**Validations performed:**\n\n- Verify that the API responds with HTTP 200.\n    \n- Verify that the response is returned in JSON format.\n    \n- Verify that updated product fields reflect the new values.\n    \n- Verify that the product ID remains unchanged.\n    \n- Verify acceptable response time for performance stability."
+              },
+              "response": []
+            },
+            {
+              "name": "Delete a product",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json();\r",
+                      "\r",
+                      "//status code and response time tests\r",
+                      "pm.test(\"Status code is 200\", () => {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "pm.test(\"Response time is acceptable\", () => {\r",
+                      "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                      "});\r",
+                      "//Response body is in JSON format.\r",
+                      "pm.test(\"Response is JSON\", () => {\r",
+                      "    pm.response.to.be.json;\r",
+                      "});\r",
+                      "\r",
+                      "/* Deleted product confirmation */\r",
+                      "pm.test(\"Deleted product ID is returned\", () => {\r",
+                      "    pm.expect(response.id).to.eql(Number(pm.environment.get(\"productId\")));\r",
+                      "});\r",
+                      "\r",
+                      "/* Deleted flag exists */\r",
+                      "pm.test(\"Product is marked as deleted\", () => {\r",
+                      "    pm.expect(response.isDeleted).to.be.true;\r",
+                      "});\r",
+                      "\r",
+                      "\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{BaseURL}}/products/{{productId}}",
+                  "host": [
+                    "{{BaseURL}}"
+                  ],
+                  "path": [
+                    "products",
+                    "{{productId}}"
+                  ]
+                },
+                "description": "This request deletes an existing product using its unique product ID.\n\nThe product ID is dynamically selected from the products list to ensure compatibility with the mock API behavior.\n\n**Validations performed:**\n\n- Verify that the API responds with HTTP 200.\n    \n- Verify that the response is returned in JSON format.\n    \n- Verify that the deleted product ID matches the requested ID.\n    \n- Verify that the product is marked as deleted.\n    \n- Verify acceptable response time for performance stability."
+              },
+              "response": []
+            }
+          ],
+          "description": "This folder contains product CRUD operations, including:\n\n- Add new product\n    \n- Update existing product\n    \n- Delete product\n    \n\nAll requests use dynamic data and environment variables where applicable."
+        }
+      ],
+      "description": "This folder groups all product-related API requests, including product retrieval and full CRUD operations."
+    },
+    {
+      "name": "Carts(Big Project)",
+      "item": [
+        {
+          "name": "Cart",
+          "item": [
+            {
+              "name": "Get all carts",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json();\r",
+                      "\r",
+                      "//Status code & responseTime \r",
+                      "pm.test(\"Status code is 200\", () => {\r",
+                      "    pm.expect(pm.response.code).to.eql(200);\r",
+                      "});\r",
+                      "pm.test(\"Response time is acceptable\", () => {\r",
+                      "    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+                      "});\r",
+                      "\r",
+                      "// Response format \r",
+                      "pm.test(\"Response is JSON\", () => {\r",
+                      "    pm.response.to.be.json;\r",
+                      "});\r",
+                      "\r",
+                      "// Structure \r",
+                      "pm.test(\"Carts array exists\", () => {\r",
+                      "    pm.expect(response.carts).to.be.an(\"array\");\r",
+                      "});\r",
+                      "pm.test(\"Carts array is not empty\", () => {\r",
+                      "    pm.expect(response.carts.length).to.be.above(0);\r",
+                      "});\r",
+                      "\r",
+                      "/* Cart fields check */\r",
+                      "pm.test(\"Each cart has required fields\", () => {\r",
+                      "    response.carts.forEach(cart => {\r",
+                      "        pm.expect(cart).to.have.property(\"id\");\r",
+                      "        pm.expect(cart).to.have.property(\"userId\");\r",
+                      "        pm.expect(cart).to.have.property(\"products\");\r",
+                      "        pm.expect(cart).to.have.property(\"total\");\r",
+                      "    });\r",
+                      "});\r",
+                      "\r",
+                      "\r",
+                      "const carts = response.carts;\r",
+                      "const randomIndex = Math.floor(Math.random() * carts.length);\r",
+                      "const randomCart = carts[randomIndex];\r",
+                      "pm.environment.set(\"cartId\", randomCart.id);\r",
+                      "pm.test(\"Random cart ID is selected and stored\", function () {\r",
+                      "    pm.expect(randomCart.id).to.exist;\r",
+                      "});\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BaseURL}}/carts",
+                  "host": [
+                    "{{BaseURL}}"
+                  ],
+                  "path": [
+                    "carts"
+                  ]
+                },
+                "description": "This request retrieves all shopping carts available in the system.\n\nIt validates the carts list structure and ensures that each cart contains the required fields and product details.\n\n**Validations performed:**\n\n- Verify that the API responds with HTTP 200.\n    \n- Verify that the response is returned in JSON format.\n    \n- Verify that the carts array exists and is not empty.\n    \n- Verify that each cart contains required cart fields.\n    \n- Verify acceptable response time for performance stability."
+              },
+              "response": []
+            },
+            {
+              "name": "Get a single cart",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json();\r",
+                      "\r",
+                      "/* Status code */\r",
+                      "pm.test(\"Status code is 200 OK\", () => {\r",
+                      "    pm.expect(pm.response.code).to.eql(200);\r",
+                      "});\r",
+                      "\r",
+                      "/* Response is JSON */\r",
+                      "pm.test(\"Response is valid JSON\", () => {\r",
+                      "    pm.response.to.be.json;\r",
+                      "});\r",
+                      "\r",
+                      "/* Cart ID is returned */\r",
+                      "pm.test(\"Cart ID is returned\", () => {\r",
+                      "    pm.expect(response.id).to.eql(Number(pm.environment.get(\"cartId\")));\r",
+                      "});\r",
+                      "\r",
+                      "/* User ID exists */\r",
+                      "pm.test(\"User ID is returned\", () => {\r",
+                      "    pm.expect(response.userId).to.exist;\r",
+                      "});\r",
+                      "\r",
+                      "/* Products array exists */\r",
+                      "pm.test(\"Products array exists\", () => {\r",
+                      "    pm.expect(response.products).to.be.an(\"array\");\r",
+                      "});\r",
+                      "\r",
+                      "/* Products array not empty */\r",
+                      "pm.test(\"Products list is not empty\", () => {\r",
+                      "    pm.expect(response.products.length).to.be.above(0);\r",
+                      "});\r",
+                      "\r",
+                      "/* Product structure */\r",
+                      "pm.test(\"Each product has required fields\", () => {\r",
+                      "    response.products.forEach(product => {\r",
+                      "        pm.expect(product).to.have.property(\"id\");\r",
+                      "        pm.expect(product).to.have.property(\"quantity\");\r",
+                      "        pm.expect(product).to.have.property(\"price\");\r",
+                      "        pm.expect(product).to.have.property(\"total\");\r",
+                      "    });\r",
+                      "});\r",
+                      "\r",
+                      "/* Cart totals exist */\r",
+                      "pm.test(\"Cart totals are returned\", () => {\r",
+                      "    pm.expect(response).to.have.property(\"total\");\r",
+                      "    pm.expect(response).to.have.property(\"discountedTotal\");\r",
+                      "    pm.expect(response).to.have.property(\"totalProducts\");\r",
+                      "    pm.expect(response).to.have.property(\"totalQuantity\");\r",
+                      "});\r",
+                      "\r",
+                      "/* Performance */\r",
+                      "pm.test(\"Response time is less than 1000 ms\", () => {\r",
+                      "    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+                      "});\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BaseURL}}/carts/{{cartId}}",
+                  "host": [
+                    "{{BaseURL}}"
+                  ],
+                  "path": [
+                    "carts",
+                    "{{cartId}}"
+                  ]
+                },
+                "description": "This request retrieves detailed information about a single cart using its unique cart ID.\n\nThe response includes cart details, user information, product list, and calculated totals.\n\n**Validations performed:**\n\n- Verify that the API responds with HTTP 200.\n    \n- Verify that the response is returned in JSON format.\n    \n- Verify that the correct cart ID is returned.\n    \n- Verify that the cart contains a list of products.\n    \n- Verify that each product contains required fields.\n    \n- Verify that cart totals are calculated and returned.\n    \n- Verify acceptable response time."
+              },
+              "response": []
+            },
+            {
+              "name": "Get carts by a user",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json();\r",
+                      "//Status code & responseTime \r",
+                      "pm.test(\"Status code is 200\", () => {\r",
+                      "    pm.expect(pm.response.code).to.eql(200);\r",
+                      "});\r",
+                      "pm.test(\"Response time is acceptable\", () => {\r",
+                      "    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+                      "});\r",
+                      "\r",
+                      "// Response format \r",
+                      "pm.test(\"Response is JSON\", () => {\r",
+                      "    pm.response.to.be.json;\r",
+                      "});\r",
+                      "\r",
+                      "\r",
+                      "/* carts array exists */\r",
+                      "pm.test(\"Carts array exists\", () => {\r",
+                      "    pm.expect(response.carts).to.be.an(\"array\");\r",
+                      "});\r",
+                      "\r",
+                      " \r",
+                      "/* carts belong to the user */\r",
+                      "pm.test(\"Carts belong to the requested user\", () => {\r",
+                      "    response.carts.forEach(cart => {\r",
+                      "        pm.expect(cart.userId).to.eql(1);\r",
+                      "    });\r",
+                      "});\r",
+                      "\r",
+                      "\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BaseURL}}/carts/user/{{userId}}",
+                  "host": [
+                    "{{BaseURL}}"
+                  ],
+                  "path": [
+                    "carts",
+                    "user",
+                    "{{userId}}"
+                  ]
+                },
+                "description": "**Description – Get Carts by User**\n\nThis request retrieves all shopping carts associated with a specific user.\n\nIt validates that the returned carts belong to the requested user and that cart data is returned successfully.\n\n**Validations performed:**\n\n- Verify that the API responds with HTTP 200.\n    \n- Verify that the response is returned in JSON format.\n    \n- Verify that at least one cart is returned.\n    \n- Verify that all returned carts belong to the requested user."
+              },
+              "response": []
+            }
+          ],
+          "description": "This folder contains read-only cart requests such as:\n\n- Get all carts\n    \n- Get single cart\n    \n- Retrieve cart data for validation and chaining"
+        },
+        {
+          "name": "CRUD",
+          "item": [
+            {
+              "name": "Add a new cart",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json();\r",
+                      "\r",
+                      "/* Status code */\r",
+                      "pm.test(\"Status code is 200\", () => {\r",
+                      "    pm.expect(pm.response.code).to.eql(201);\r",
+                      "});\r",
+                      "\r",
+                      "/* Response format */\r",
+                      "pm.test(\"Response is JSON\", () => {\r",
+                      "    pm.response.to.be.json;\r",
+                      "});\r",
+                      "\r",
+                      "/* Cart ID returned */\r",
+                      "pm.test(\"Cart ID is returned\", () => {\r",
+                      "    pm.expect(response.id).to.exist;\r",
+                      "});\r",
+                      "\r",
+                      "/* User ID returned */\r",
+                      "pm.test(\"User ID is returned\", () => {\r",
+                      "    pm.expect(response.userId).to.eql(Number(pm.environment.get(\"userId\")));\r",
+                      "});\r",
+                      "\r",
+                      "/* Products array validation */\r",
+                      "pm.test(\"Products array exists and is not empty\", () => {\r",
+                      "    pm.expect(response.products).to.be.an(\"array\");\r",
+                      "    pm.expect(response.products.length).to.be.above(0);\r",
+                      "});\r",
+                      "\r",
+                      "/* Product structure */\r",
+                      "pm.test(\"Each product contains id and quantity\", () => {\r",
+                      "    response.products.forEach(product => {\r",
+                      "        pm.expect(product).to.have.property(\"id\");\r",
+                      "        pm.expect(product).to.have.property(\"quantity\");\r",
+                      "    });\r",
+                      "});\r",
+                      "\r",
+                      "/* Totals exist */\r",
+                      "pm.test(\"Cart totals are calculated\", () => {\r",
+                      "    pm.expect(response).to.have.property(\"total\");\r",
+                      "    pm.expect(response).to.have.property(\"totalProducts\");\r",
+                      "    pm.expect(response).to.have.property(\"totalQuantity\");\r",
+                      "});\r",
+                      "\r",
+                      "/* Performance */\r",
+                      "pm.test(\"Response time is less than 2000 ms\", () => {\r",
+                      "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                      "});\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"userId\":{{userId}},\r\n  \"products\": [\r\n    {\r\n      \"id\":{{productId}},\r\n      \"quantity\": 4\r\n    },\r\n    {\r\n      \"id\": 98,\r\n      \"quantity\": 1\r\n    }\r\n  ]\r\n}\r\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BaseURL}}/carts/add",
+                  "host": [
+                    "{{BaseURL}}"
+                  ],
+                  "path": [
+                    "carts",
+                    "add"
+                  ]
+                },
+                "description": "This request simulates adding a new shopping cart for a user.\n\nThe request sends a user ID along with a list of products and their quantities.  \n  \nSince this is a mock API, the cart is not persisted on the server and is returned only as a simulated response.\n\n**Validations performed:**\n\n- Verify that the API responds with HTTP 200.\n    \n- Verify that the response is returned in JSON format.\n    \n- Verify that a cart ID is returned.\n    \n- Verify that the correct user ID is associated with the cart.\n    \n- Verify that the products array exists and contains product IDs and quantities.\n    \n- Verify that cart totals (total, totalProducts, totalQuantity) are returned.\n    \n- Verify acceptable response time for performance stability.\n    \n\n> &lt;p &gt;&lt;/p&gt;"
+              },
+              "response": []
+            },
+            {
+              "name": "Update a cart",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json();\r",
+                      "\r",
+                      "/* Status code */\r",
+                      "pm.test(\"Status code is 200\", () => {\r",
+                      "    pm.expect(pm.response.code).to.eql(200);\r",
+                      "});\r",
+                      "\r",
+                      "/* Response format */\r",
+                      "pm.test(\"Response is JSON\", () => {\r",
+                      "    pm.response.to.be.json;\r",
+                      "});\r",
+                      "\r",
+                      "/* Cart ID exists */\r",
+                      "pm.test(\"Cart ID is returned\", () => {\r",
+                      "    pm.expect(response.id).to.exist;\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Udated cart ID is correct\", () => {\r",
+                      "    pm.expect(response.id).to.eql(\r",
+                      "        Number(pm.environment.get(\"cartId\"))\r",
+                      "    );\r",
+                      "});\r",
+                      "\r",
+                      "\r",
+                      "/* Products array exists */\r",
+                      "pm.test(\"Products array exists\", () => {\r",
+                      "    pm.expect(response.products).to.be.an(\"array\");\r",
+                      "});\r",
+                      "\r",
+                      "/* Updated product exists */\r",
+                      "pm.test(\"Updated product exists in cart\", () => {\r",
+                      "    const product = response.products.find(p => p.id === 1);\r",
+                      "    pm.expect(product).to.exist;\r",
+                      "});\r",
+                      "\r",
+                      "/* Quantity updated */\r",
+                      "pm.test(\"Product quantity is updated\", () => {\r",
+                      "    const product = response.products.find(p => p.id === 1);\r",
+                      "    pm.expect(product.quantity).to.eql(1);\r",
+                      "});\r",
+                      "\r",
+                      "/* Totals exist */\r",
+                      "pm.test(\"Cart totals are returned\", () => {\r",
+                      "    pm.expect(response).to.have.property(\"total\");\r",
+                      "    pm.expect(response).to.have.property(\"totalQuantity\");\r",
+                      "});\r",
+                      "\r",
+                      "/* Performance */\r",
+                      "pm.test(\"Response time is less than 2000 ms\", () => {\r",
+                      "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                      "});\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"merge\": true,\r\n  \"products\": [\r\n    {\r\n      \"id\":1,\r\n      \"quantity\": 1\r\n    }\r\n  ]\r\n}\r\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BaseURL}}/carts/{{cartId}}",
+                  "host": [
+                    "{{BaseURL}}"
+                  ],
+                  "path": [
+                    "carts",
+                    "{{cartId}}"
+                  ]
+                },
+                "description": "This request simulates updating an existing shopping cart.\n\nThe request modifies product quantities using the merge option to preserve existing cart items.  \n  \nSince this is a mock API, the update operation is simulated and the updated cart is returned in the response.\n\n**Validations performed:**\n\n- Verify that the API responds with HTTP 200.\n    \n- Verify that the response is returned in JSON format.\n    \n- Verify that the cart ID is returned.\n    \n- Verify that the updated product exists in the cart.\n    \n- Verify that product quantity is updated correctly.\n    \n- Verify that cart totals are returned.\n    \n- Verify acceptable response time for performance stability"
+              },
+              "response": []
+            },
+            {
+              "name": "Delete a cart",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json();\r",
+                      "\r",
+                      "/* Status code */\r",
+                      "pm.test(\"Status code is 200\", () => {\r",
+                      "    pm.expect(pm.response.code).to.eql(200);\r",
+                      "});\r",
+                      "\r",
+                      "/* Response format */\r",
+                      "pm.test(\"Response is JSON\", () => {\r",
+                      "    pm.response.to.be.json;\r",
+                      "});\r",
+                      "\r",
+                      "/* Cart ID returned */\r",
+                      "pm.test(\"Deleted cart ID is returned\", () => {\r",
+                      "    pm.expect(response.id).to.eql(\r",
+                      "        Number(pm.environment.get(\"cartId\"))\r",
+                      "    );\r",
+                      "});\r",
+                      "\r",
+                      "\r",
+                      "/* isDeleted flag */\r",
+                      "pm.test(\"Cart is marked as deleted\", () => {\r",
+                      "    pm.expect(response.isDeleted).to.be.true;\r",
+                      "});\r",
+                      "\r",
+                      "/* deletedOn exists */\r",
+                      "pm.test(\"Deleted timestamp exists\", () => {\r",
+                      "    pm.expect(response.deletedOn).to.exist;\r",
+                      "});\r",
+                      "\r",
+                      "/* Performance */\r",
+                      "pm.test(\"Response time is less than 2000 ms\", () => {\r",
+                      "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                      "});\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{BaseURL}}/carts/{{cartId}}",
+                  "host": [
+                    "{{BaseURL}}"
+                  ],
+                  "path": [
+                    "carts",
+                    "{{cartId}}"
+                  ]
+                },
+                "description": "**Description – Delete Cart**\n\nThis request simulates deleting an existing shopping cart.\n\nSince this is a mock API, the cart is not permanently deleted from the server.  \n  \nThe API returns the deleted cart with deletion indicators for validation purposes.\n\n**Validations performed:**\n\n- Verify that the API responds with HTTP 200.\n    \n- Verify that the response is returned in JSON format.\n    \n- Verify that the deleted cart ID is returned.\n    \n- Verify that the cart is marked as deleted using the `isDeleted` flag.\n    \n- Verify that a deletion timestamp (`deletedOn`) is returned.\n    \n- Verify acceptable response time for performance stability."
+              },
+              "response": []
+            }
+          ],
+          "description": "This folder contains cart CRUD operations, including:\n\n- Add products to cart\n    \n- Update cart\n    \n- Delete cart\n    \n\nDynamic cart IDs are used to support reusable and realistic testing."
+        }
+      ],
+      "description": "This folder groups all cart-related API requests, covering cart retrieval and cart CRUD workflows."
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "Get all products categories",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "\r",
+                  "/* Status code */\r",
+                  "pm.test(\"Status code is 200\", () => {\r",
+                  "    pm.expect(pm.response.code).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "/* Content-Type */\r",
+                  "pm.test(\"Response Content-Type is application/json\", () => {\r",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\"))\r",
+                  "      .to.include(\"application/json\");\r",
+                  "});\r",
+                  "\r",
+                  "/* Response format */\r",
+                  "pm.test(\"Response is JSON\", () => {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "/* Categories array */\r",
+                  "pm.test(\"Categories list is returned\", () => {\r",
+                  "    pm.expect(response).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "/* Categories not empty */\r",
+                  "pm.test(\"Categories list is not empty\", () => {\r",
+                  "    pm.expect(response.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "/* Category object structure */\r",
+                  "pm.test(\"Each category contains slug, name, and url\", () => {\r",
+                  "    response.forEach(category => {\r",
+                  "        pm.expect(category).to.have.property(\"slug\");\r",
+                  "        pm.expect(category).to.have.property(\"name\");\r",
+                  "        pm.expect(category).to.have.property(\"url\");\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "/* Performance */\r",
+                  "pm.test(\"Response time is less than 2000 ms\", () => {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BaseURL}}/products/categories",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "products",
+                "categories"
+              ]
+            },
+            "description": "This request retrieves all available product categories.\n\nThe response returns a list of category objects, where each object contains a **slug**, **name**, and **URL** for the category.\n\n**Validations performed:**\n\n- Verify that the API responds with HTTP 200.\n    \n- Verify that the response is returned in JSON format.\n    \n- Verify that the categories list exists and is not empty.\n    \n- Verify that each category object contains `slug`, `name`, and `url` fields.\n    \n- Verify acceptable response time for performance stability."
+          },
+          "response": []
+        },
+        {
+          "name": "Get products category list",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "\r",
+                  "/* Status code */\r",
+                  "pm.test(\"Status code is 200\", () => {\r",
+                  "    pm.expect(pm.response.code).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "/* Content-Type */\r",
+                  "pm.test(\"Response Content-Type is application/json\", () => {\r",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\"))\r",
+                  "      .to.include(\"application/json\");\r",
+                  "});\r",
+                  "\r",
+                  "/* Response format */\r",
+                  "pm.test(\"Response is JSON\", () => {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "/* Categories list exists */\r",
+                  "pm.test(\"Category list is returned\", () => {\r",
+                  "    pm.expect(response).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "/* Not empty */\r",
+                  "pm.test(\"Category list is not empty\", () => {\r",
+                  "    pm.expect(response.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "/* Each item is a string */\r",
+                  "pm.test(\"Each category is a string\", () => {\r",
+                  "    response.forEach(category => {\r",
+                  "        pm.expect(category).to.be.a(\"string\");\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "/* Performance */\r",
+                  "pm.test(\"Response time is less than 2000 ms\", () => {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  "\r",
+                  "const categories = pm.response.json();\r",
+                  "const randomCategory =\r",
+                  "categories[Math.floor(Math.random() * categories.length)];\r",
+                  "pm.environment.set(\"randomCategory\", randomCategory);\r",
+                  "pm.test(\"Random category is saved\", () => {\r",
+                  "    pm.expect(randomCategory).to.be.a(\"string\");\r",
+                  "});\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BaseURL}}/products/category-list",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "products",
+                "category-list"
+              ]
+            },
+            "description": "This request retrieves a simplified list of product category names.\n\nThe response returns an array of strings, where each string represents a product category.\n\n**Validations performed:**\n\n- Verify that the API responds with HTTP 200.\n    \n- Verify that the response Content-Type is `application/json`.\n    \n- Verify that the response body is valid JSON.\n    \n- Verify that the category list exists and is not empty.\n    \n- Verify that each category value is a string.\n    \n- Verify acceptable response time for performance stability."
+          },
+          "response": []
+        },
+        {
+          "name": "Get products by a category",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "\r",
+                  "/* Status code */\r",
+                  "pm.test(\"Status code is 200\", () => {\r",
+                  "    pm.expect(pm.response.code).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "/* Content-Type */\r",
+                  "pm.test(\"Response Content-Type is application/json\", () => {\r",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\"))\r",
+                  "      .to.include(\"application/json\");\r",
+                  "});\r",
+                  "\r",
+                  "/* Response format */\r",
+                  "pm.test(\"Response is JSON\", () => {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "/* Products array exists */\r",
+                  "pm.test(\"Products array exists\", () => {\r",
+                  "    pm.expect(response.products).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "/* Products not empty */\r",
+                  "pm.test(\"Products list is not empty\", () => {\r",
+                  "    pm.expect(response.products.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "/* Product fields */\r",
+                  "pm.test(\"Each product contains required fields\", () => {\r",
+                  "    response.products.forEach(product => {\r",
+                  "        pm.expect(product).to.have.property(\"id\");\r",
+                  "        pm.expect(product).to.have.property(\"title\");\r",
+                  "        pm.expect(product).to.have.property(\"price\");\r",
+                  "        pm.expect(product).to.have.property(\"category\");\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "/* Correct category (dynamic) */\r",
+                  "pm.test(\"All products belong to the selected category\", () => {\r",
+                  "    const selectedCategory = pm.environment.get(\"randomCategory\");\r",
+                  "\r",
+                  "    response.products.forEach(product => {\r",
+                  "        pm.expect(product.category).to.eql(selectedCategory);\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "/* Performance */\r",
+                  "pm.test(\"Response time is less than 2000 ms\", () => {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BaseURL}}/products/category/{{randomCategory}}",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "products",
+                "category",
+                "{{randomCategory}}"
+              ]
+            },
+            "description": "This request retrieves all products that belong to a specific product category.\n\nThe category name is provided as part of the request URL.\n\nThe category is selected dynamically from the available category list.  \n  \nThe response includes a list of products associated with the selected category.\n\n**Validations performed:**\n\n- Verify that the API responds with HTTP 200.\n    \n- Verify that the response Content-Type is `application/json`.\n    \n- Verify that the response body is valid JSON.\n    \n- Verify that the products list exists and is not empty.\n    \n- Verify that each product contains required product fields.\n    \n- Verify that all returned products belong to the selected category.\n    \n- Verify acceptable response time for performance stability."
+          },
+          "response": []
+        }
+      ],
+      "description": "This folder contains requests related to retrieving and validating all available product categories."
+    },
+    {
+      "name": "Negative Scenarios",
+      "item": [
+        {
+          "name": "Login with Invalid Credentials",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "\r",
+                  "/* Status code */\r",
+                  "pm.test(\"Status code is 400 or 401\", () => {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 401]);\r",
+                  "});\r",
+                  "\r",
+                  "/* Response is JSON */\r",
+                  "pm.test(\"Response is JSON\", () => {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "/* Error message exists */\r",
+                  "pm.test(\"Error message is returned\", () => {\r",
+                  "    pm.expect(response.message || response.error).to.exist;\r",
+                  "});\r",
+                  "\r",
+                  "/* No access token returned */\r",
+                  "pm.test(\"Access token is not returned\", () => {\r",
+                  "    pm.expect(response.accessToken).to.be.undefined;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is less than 2000 ms\", () => {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"wrongUser\",\r\n  \"password\": \"wrongPassword\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BaseURL}}/auth/login",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "This request validates system behavior when invalid login credentials are provided.\n\nThe API is expected to reject the request and return an appropriate error response without issuing authentication tokens.\n\n**Validations performed:**\n\n- Verify that the API responds with HTTP 400 or 401.\n    \n- Verify that the response is returned in JSON format.\n    \n- Verify that an error message is returned.\n    \n- Verify that no access token is generated."
+          },
+          "response": []
+        },
+        {
+          "name": "Unauthorized Access (Missing Token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "\r",
+                  "/* Status code */\r",
+                  "pm.test(\"Status code is 401 Unauthorized\", () => {\r",
+                  "    pm.expect(pm.response.code).to.eql(401);\r",
+                  "});\r",
+                  "\r",
+                  "/* Response is JSON */\r",
+                  "pm.test(\"Response is JSON\", () => {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "/* Error message exists */\r",
+                  "pm.test(\"Unauthorized error message is returned\", () => {\r",
+                  "    pm.expect(response.message || response.error).to.exist;\r",
+                  "});\r",
+                  "\r",
+                  "/* No user data returned */\r",
+                  "pm.test(\"No user data is returned\", () => {\r",
+                  "    pm.expect(response.id).to.be.undefined;\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BaseURL}}/auth/me",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid ID for product(Resource Not Found)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "\r",
+                  "/* Status code */\r",
+                  "pm.test(\"Status code is 404 Not Found\", () => {\r",
+                  "    pm.expect(pm.response.code).to.eql(404);\r",
+                  "});\r",
+                  "\r",
+                  "/* Response is JSON */\r",
+                  "pm.test(\"Response is JSON\", () => {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "/* Error message exists */\r",
+                  "pm.test(\"Error message is returned\", () => {\r",
+                  "    pm.expect(response.message || response.error).to.exist;\r",
+                  "});\r",
+                  "\r",
+                  "/* No product data returned */\r",
+                  "pm.test(\"No product data is returned\", () => {\r",
+                  "    pm.expect(response.id).to.be.undefined;\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BaseURL}}/products/999999",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "products",
+                "999999"
+              ]
+            },
+            "description": "This request validates system behavior when requesting a product using an invalid or non-existent ID.\n\nThe API is expected to return a not found error and not expose any product data.\n\n**Validations performed:**\n\n- Verify that the API responds with HTTP 404.\n    \n- Verify that the response is returned in JSON format.\n    \n- Verify that an error message is returned.\n    \n- Verify that no product data is returned."
+          },
+          "response": []
+        },
+        {
+          "name": "Add Product with Missing Required Fields",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "\r",
+                  "/* Expected: API should reject invalid data */\r",
+                  "pm.test(\"Status code should be 400 Bad Request\", () => {\r",
+                  "    pm.expect(pm.response.code).to.eql(400);\r",
+                  "});\r",
+                  "\r",
+                  "/* Expected: Response should be JSON */\r",
+                  "pm.test(\"Response should be JSON\", () => {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "/* Expected: Validation error message should be returned */\r",
+                  "pm.test(\"Validation error message should be returned\", () => {\r",
+                  "    pm.expect(response.message || response.error).to.exist;\r",
+                  "});\r",
+                  "\r",
+                  "/* Expected: Product should NOT be created */\r",
+                  "pm.test(\"Product ID should NOT be returned\", () => {\r",
+                  "    pm.expect(response.id).to.be.undefined;\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BaseURL}}/products/add",
+              "host": [
+                "{{BaseURL}}"
+              ],
+              "path": [
+                "products",
+                "add"
+              ]
+            },
+            "description": "- The API should reject the request when mandatory fields are missing.\n    \n- The API should return HTTP 400 with a validation error message.\n    \n- The product should not be created.\n    \n\nActual behavior:\n\n- The API accepts the request and creates a product.\n    \n- HTTP 201 is returned even when required fields are missing.\n    \n\nResult:\n\n- ❌ Test Failed\n    \n- This indicates missing server-side validation and represents a data integrity risk."
+          },
+          "response": []
+        }
+      ],
+      "description": "This folder contains negative and edge case scenarios to validate API error handling, including invalid inputs, missing parameters, and incorrect request methods."
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}
