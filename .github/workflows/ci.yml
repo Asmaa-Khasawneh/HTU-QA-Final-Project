@@ -20,5 +20,5 @@ jobs:
 
     - name: Run UI Automation Tests
       run: |
-        cd 05-UI-Automation
+        cd "05-UI-Automation/UI Automation Project/HTU-FinalProject-AsmaaKhasawneh"
         mvn clean test
