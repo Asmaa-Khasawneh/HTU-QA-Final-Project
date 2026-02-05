@@ -138,7 +138,7 @@ UI automation testing evidence is available in the `05-UI-Automation` folder.
 This folder contains a Word document that includes execution screenshots, a recorded run video, test results, and analysis of the automated tests.
 A README file is also included to provide additional details about the UI automation evidence.
 
-### UI Automation Evidence
+### Mobile Automation Evidence
 UI automation testing evidence is available in the `06-Mobile-Testing` folder.
 This folder contains a README File that includes execution screenshots, a recorded run video, and analysis of the automated tests.
 Basic mobile automation test evidence using Appium is also included in the same folder.
