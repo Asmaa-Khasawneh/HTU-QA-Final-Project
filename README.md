@@ -61,6 +61,10 @@ Required Maven dependencies, including Selenium and TestNG, were added to manage
 TestNG was used as the testing framework to structure and execute automated test cases.
 The Maven project structure was used to ensure maintainability and ease of execution.
 
+### Mobile Automation 
+Basic mobile automation testing was performed on the SauceDemo application using Appium with an Android Emulator.
+A limited set of critical test cases was automated to demonstrate mobile testing capability.
+
 ## How to Run Tests
 This section describes how to execute all test cases implemented in this project.
 It explains the required steps to run API tests, performance tests, and UI automation tests using the corresponding tools and configurations.
@@ -105,6 +109,10 @@ The k6 performance test script is already prepared and included in the repositor
 6. Right-click on the test suite and select **Run As → TestNG Suite**.
 7. Review the test execution results in the Eclipse console.
 
+### Run Mobile Automation Tests
+Mobile automation tests were executed using Appium connected to an Android Emulator.
+The tests were run directly from the automation project to validate basic mobile user flows.
+
 ## Where to Find Evidence and Reports
 
 This section provides the locations of all test evidence, execution results, and reports generated during the testing activities.
@@ -130,8 +138,13 @@ UI automation testing evidence is available in the `05-UI-Automation` folder.
 This folder contains a Word document that includes execution screenshots, a recorded run video, test results, and analysis of the automated tests.
 A README file is also included to provide additional details about the UI automation evidence.
 
+### UI Automation Evidence
+UI automation testing evidence is available in the `06-Mobile-Testing` folder.
+This folder contains a README File that includes execution screenshots, a recorded run video, and analysis of the automated tests.
+Basic mobile automation test evidence using Appium is also included in the same folder.
+
 ### Final Project Report
-The complete project report is available in the `06-Report` folder.
+The complete project report is available in the `07-Report` folder.
 This folder contains the final technical report titled `FinalReport-Asmaa-Khasawneh`, which provides a comprehensive overview of the project, including testing strategy, execution summary, results, analysis, and conclusions.
 
 
